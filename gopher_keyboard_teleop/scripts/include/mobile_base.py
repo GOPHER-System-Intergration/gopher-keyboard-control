@@ -34,8 +34,8 @@ class MobileBase():
         self.current_lin_jerk = 0.0
         self.current_rot_jerk = 0.0
 
-        self.max_lin_vel = 0.50 # meters
-        self.min_lin_vel = -0.50 # meters
+        self.max_lin_vel = 0.5 # meters
+        self.min_lin_vel = -0.2 # meters
         self.max_rot_vel = pi/2.0 # rads per sec (90 degrees per sec)
         self.min_rot_vel = -pi/2.0
 
@@ -172,13 +172,19 @@ class MobileBase():
             # i need some velocity to start smoothing at the vel curve
             
 
-            if error_around_zero > smooth_out_vel_bound:
-                rospy.WARN("Error is too large. Consider lowering it below 0.1")
+            # if error_around_zero > smooth_out_vel_bound:
+            #     rospy.WARN("Error is too large. Consider lowering it below 0.1")
 
-            if target_vel > smooth_out_vel_bound: return deaccel
-            elif target_vel < smooth_out_vel_bound and target_vel > error_around_zero: return update_accel_using_jerk(current_accel, neg_jerk)
-            elif target_vel < -smooth_out_vel_bound: return accel
-            elif target_vel > -smooth_out_vel_bound and target_vel < - error_around_zero: return update_accel_using_jerk(current_accel, pos_jerk)
+            # if target_vel > smooth_out_vel_bound: return deaccel
+            # elif target_vel < smooth_out_vel_bound and target_vel > error_around_zero: return update_accel_using_jerk(current_accel, neg_jerk)
+            # elif target_vel < -smooth_out_vel_bound: return accel
+            # elif target_vel > -smooth_out_vel_bound and target_vel < - error_around_zero: return update_accel_using_jerk(current_accel, pos_jerk)
+            # else: return 0.0
+
+            if target_vel > error_around_zero: return deaccel
+            # elif target_vel < smooth_out_vel_bound and target_vel > error_around_zero: return update_accel_using_jerk(current_accel, neg_jerk)
+            elif target_vel < -error_around_zero: return accel
+            # elif target_vel > -smooth_out_vel_bound and target_vel < - error_around_zero: return update_accel_using_jerk(current_accel, pos_jerk)
             else: return 0.0
 
 

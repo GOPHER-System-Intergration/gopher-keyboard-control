@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find fetch_navigation)/launch/freight_nav.launch" >
+    <arg name="map_file" value="$(find gopher_keyboard_teleop)/maps/hiro_lab_map.yaml" />
+    <arg name="map_keepout_file" value="$(find gopher_keyboard_teleop)/maps/keepout_hiro_lab_map.yaml" />
+    <arg name="use_keepout" value="false" />
+  </include>
+</launch>

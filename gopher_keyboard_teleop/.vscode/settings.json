@@ -1,0 +1,9 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/ice/hiro_ws/devel/lib/python3/dist-packages",
+        "/home/ice/ws_moveit/devel/lib/python3/dist-packages",
+        "/home/ice/rbe500_ros/devel/lib/python3/dist-packages",
+        "/home/ice/catkin_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
+}
