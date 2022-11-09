@@ -1,0 +1,12 @@
+<launch>
+
+    <!-- Gazebo Launch file from fetch_gazebo for the freight-->
+    <include file="$(find fetch_gazebo)/launch/simulation.launch">
+        <arg name="robot" value="freight"/>
+    </include>
+
+    <!-- Bring up the navigation stack and the debugging tools-->
+    <include file="$(find gopher_keyboard_teleop)/launch/move_base_setup.launch"/> 
+    
+
+</launch>

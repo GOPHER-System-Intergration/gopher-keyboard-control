@@ -236,11 +236,13 @@ if __name__ == '__main__':
         on_release=computer_keyboard.on_release)
     listener.start()
 
+
     try:
         while listener.is_alive():
             
+            
             computer_keyboard.keys_map_robot_control(keys = current_keys)
-            computer_keyboard.print_held_keys()
+            # computer_keyboard.print_held_keys()
     except:
         restoreTerminalSettings(settings)
         

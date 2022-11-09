@@ -1,0 +1,12 @@
+<launch>
+    <!-- freight nav Launch file from our package for the freight-->
+    <include file="$(find gopher_keyboard_teleop)/launch/freight_nav.launch"/> 
+    
+    <node name="gopher_debug_dashboard" 
+        type="rqt_gui" 
+        pkg="rqt_gui" 
+        output="screen" 
+        respawn="false" 
+        arg="--perspective-file $(find gopher_keyboard_teleop)/config/gopher_mobile_base_debug.perspective"/>
+    
+</launch>

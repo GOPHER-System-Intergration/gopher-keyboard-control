@@ -5,11 +5,17 @@ from operator import and_
 
 import rospy
 import actionlib
+# import tf
 
-from std_msgs.msg import String
+import tf2_ros
+import tf_conversions
+
+from std_msgs.msg import String, Float32
 from pynput import keyboard
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, PoseStamped, TransformStamped
+from nav_msgs.msg import Odometry
 from math import pi, sin, cos 
+
 
 # Action Lib messages
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
@@ -21,6 +27,7 @@ class MobileBase():
 
         # self.twist_pub = rospy.Publisher('gopher/base_controller/command', Twist, queue_size=1)
         self.twist_pub = rospy.Publisher('base_controller/command', Twist, queue_size=1)
+        self.accel_pub = rospy.Publisher('base_controller/accel', Float32, queue_size=1)
 
         self.current_lin_vel = 0.0
         self.current_rot_vel = 0.0
@@ -176,9 +183,9 @@ class MobileBase():
             #     rospy.WARN("Error is too large. Consider lowering it below 0.1")
 
             # if target_vel > smooth_out_vel_bound: return deaccel
-            # elif target_vel < smooth_out_vel_bound and target_vel > error_around_zero: return update_accel_using_jerk(current_accel, neg_jerk)
+            # elif target_vel < smooth_out_vel_bound and target_vel > error_around_zero: return deaccel
             # elif target_vel < -smooth_out_vel_bound: return accel
-            # elif target_vel > -smooth_out_vel_bound and target_vel < - error_around_zero: return update_accel_using_jerk(current_accel, pos_jerk)
+            # elif target_vel > -smooth_out_vel_bound and target_vel < - error_around_zero: return accel
             # else: return 0.0
 
             if target_vel > error_around_zero: return deaccel
@@ -236,6 +243,14 @@ class MobileBase():
             self.current_rot_accel = self.min_rot_accel
         else:
             choose_rot_accel_toward_stopping()
+        
+        try:
+            accel = Float32()
+            accel.data = self.current_lin_accel
+            self.accel_pub.publish(accel)
+        except:
+            print("mess up")
+
 
         self.update_target_vel()
         self.pub_target_vel()
@@ -249,8 +264,23 @@ class MoveBaseActionClient(object):
 
     def __init__(self):
         self.client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+        self.goal_ros_pub=rospy.Publisher("debug/move_base/goal", TransformStamped, queue_size=1)
+
         rospy.loginfo("Waiting for move_base...")
-        self.client.wait_for_server()
+        try:
+            self.client.wait_for_server(rospy.Duration(2.0))
+        except:
+            rospy.logwarn("Took Too long for service to connect")
+        rospy.loginfo("Server Connected")
+
+        self.tf_broadcaster = tf2_ros.TransformBroadcaster()
+
+        self.buffer = tf2_ros.Buffer()
+        self.tf_listener = tf2_ros.TransformListener(self.buffer)
+
+    def update_current_position(self, msg):
+
+        self.current_est_position = msg
 
     def goto(self, x, y, theta, frame="map"):
         move_goal = MoveBaseGoal()
@@ -264,5 +294,87 @@ class MoveBaseActionClient(object):
         # TODO wait for things to work
         self.client.send_goal(move_goal)
         self.client.wait_for_result()
+
+    def move_forward(self, x):
+        # http://wiki.ros.org/navigation/Tutorials/SendingSimpleGoals
+
+        move_goal = MoveBaseGoal()
+        move_goal.target_pose.pose.position.x = x
+        move_goal.target_pose.pose.orientation.z = 1.0
+        move_goal.target_pose.pose.orientation.w = 0.0
+        move_goal.target_pose.header.frame_id = "base_link"
+        move_goal.target_pose.header.stamp = rospy.Time.now()
+
+        
+        self.client.send_goal(move_goal)
+        self.client.wait_for_result()
+
+    def move_relative(self, x, theta):
+        # http://wiki.ros.org/navigation/Tutorials/SendingSimpleGoals
+        # http://docs.ros.org/en/jade/api/tf/html/python/tf_python.html
+
+        # whats the goal relative to the base frame
+        rospy.loginfo("Creating and populating transformation")
+
+        t = TransformStamped()
+        
+        t.header.stamp = rospy.Time.now()
+        t.header.frame_id = "base_link"
+        t.child_frame_id = "relative_goal"
+        t.transform.translation.x = x
+
+        q = tf_conversions.transformations.quaternion_from_euler(0.0, 0.0, theta)
+
+        t.transform.rotation.x = q[0]
+        t.transform.rotation.y = q[1]
+        t.transform.rotation.z = q[2]
+        t.transform.rotation.w = q[3]
+
+        rospy.loginfo("Sending Transformation")
+            
+        self.tf_broadcaster.sendTransform(t)
+
+        rospy.loginfo("Sent")
+
+        trans = TransformStamped()
+
+        try:
+            
+            # move_goal = MoveBaseGoal()
+            trans = self.buffer.lookup_transform("map", "relative_goal", rospy.Time(), rospy.Duration(2.0))
+            
+            # Debugging
+            # self.goal_ros_pub.publish(trans)
+
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
+            rospy.logerr(e)
+
+        rospy.loginfo("Creating and populating MoveBaseGoal")
+
+        move_goal = MoveBaseGoal()
+
+        move_goal.target_pose.pose.position.x = trans.transform.translation.x
+        move_goal.target_pose.pose.position.y = trans.transform.translation.y
+        move_goal.target_pose.pose.position.z = trans.transform.translation.z
+
+        
+        move_goal.target_pose.pose.orientation.x = trans.transform.rotation.x
+        move_goal.target_pose.pose.orientation.y = trans.transform.rotation.y
+        move_goal.target_pose.pose.orientation.z = trans.transform.rotation.z
+        move_goal.target_pose.pose.orientation.w = trans.transform.rotation.w
+        move_goal.target_pose.header.frame_id = "map"
+        move_goal.target_pose.header.stamp = rospy.Time.now()
+            
+        rospy.loginfo("Sending Goal")
+
+        self.client.send_goal(move_goal)
+
+        rospy.loginfo("Sent Goal, wating for result")
+        
+        self.client.wait_for_result()
+
+        
+
+    
 
         
