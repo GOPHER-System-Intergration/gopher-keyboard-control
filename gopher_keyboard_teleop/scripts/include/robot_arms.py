@@ -37,15 +37,32 @@ class RobotArm():
             elif key2 in keys: return -1.0
             else: return 0.0
 
+
         # position control
         try:
-            x_vel = check_key_pairs_for_vel('w', 's') 
-            y_vel = check_key_pairs_for_vel('d', 'a') 
-            z_vel = check_key_pairs_for_vel('e', 'q') 
-            roll_vel  = check_key_pairs_for_vel('l', 'j') 
-            pitch_vel = check_key_pairs_for_vel('i', 'k')
-            yaw_vel   = check_key_pairs_for_vel('o', 'u')
-            self.pub_vel(x_vel, y_vel, z_vel, roll_vel, pitch_vel, yaw_vel)
+            # TODO add the positions that should be sent to the robot, and replace pass when done!
+
+            if   "f1" in keys: 
+                pass
+            elif "f2" in keys:
+                pass
+            elif "f3" in keys:
+                pass
+            elif "f4" in keys:
+                pass
+            elif "f5" in keys:
+                pass
+            elif "f6" in keys:
+                pass
+            else:
+                x_vel = check_key_pairs_for_vel('w', 's') 
+                y_vel = check_key_pairs_for_vel('d', 'a') 
+                z_vel = check_key_pairs_for_vel('e', 'q') 
+                roll_vel  = check_key_pairs_for_vel('l', 'j') 
+                pitch_vel = check_key_pairs_for_vel('i', 'k')
+                yaw_vel   = check_key_pairs_for_vel('o', 'u')
+                self.pub_vel(x_vel, y_vel, z_vel, roll_vel, pitch_vel, yaw_vel)
+
         except:
             self.pub_vel(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 

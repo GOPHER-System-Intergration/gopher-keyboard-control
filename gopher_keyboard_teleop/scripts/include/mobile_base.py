@@ -13,7 +13,7 @@ import tf_conversions
 from std_msgs.msg import String, Float32
 from pynput import keyboard
 from geometry_msgs.msg import Twist, PoseStamped, TransformStamped
-from nav_msgs.msg import Odometry
+from nav_msgs.msg import Odometry, Path
 from math import pi, sin, cos 
 
 
@@ -177,21 +177,22 @@ class MobileBase():
             # choosing the acceleration to slow down the base
 
             # i need some velocity to start smoothing at the vel curve
-            
 
-            # if error_around_zero > smooth_out_vel_bound:
-            #     rospy.WARN("Error is too large. Consider lowering it below 0.1")
+            if target_vel > smooth_out_vel_bound: return deaccel
+            elif target_vel > error_around_zero: return 0.5*deaccel
+            elif target_vel < -smooth_out_vel_bound: return accel
+            elif target_vel < -error_around_zero: return 0.5*accel
+            else: return 0.0
 
-            # if target_vel > smooth_out_vel_bound: return deaccel
-            # elif target_vel < smooth_out_vel_bound and target_vel > error_around_zero: return deaccel
-            # elif target_vel < -smooth_out_vel_bound: return accel
-            # elif target_vel > -smooth_out_vel_bound and target_vel < - error_around_zero: return accel
-            # else: return 0.0
+        def choose_target_accel_toward_stopping_old_imp(error_around_zero, smooth_out_vel_bound, target_vel, accel, deaccel, current_accel, pos_jerk, neg_jerk):
+            # choosing the acceleration to slow down the base
+
+            # i need some velocity to start smoothing at the vel curve
 
             if target_vel > error_around_zero: return deaccel
-            # elif target_vel < smooth_out_vel_bound and target_vel > error_around_zero: return update_accel_using_jerk(current_accel, neg_jerk)
+           
             elif target_vel < -error_around_zero: return accel
-            # elif target_vel > -smooth_out_vel_bound and target_vel < - error_around_zero: return update_accel_using_jerk(current_accel, pos_jerk)
+            
             else: return 0.0
 
 
@@ -213,14 +214,14 @@ class MobileBase():
 
         def choose_rot_accel_toward_stopping():
             # we should choose a new acceleration in the attempot to slow down the base
-            self.current_rot_accel = choose_target_accel_toward_stopping(   error_around_zero = 0.05,
-                                                                            smooth_out_vel_bound = self.smooth_out_rot_vel, 
-                                                                            target_vel = self.target_rot_vel,
-                                                                            accel = self.max_rot_accel,
-                                                                            deaccel = self.min_rot_accel,
-                                                                            current_accel = self.current_rot_accel,
-                                                                            pos_jerk = self.pos_rot_jerk,
-                                                                            neg_jerk= self.neg_rot_jerk)
+            self.current_rot_accel = choose_target_accel_toward_stopping_old_imp(   error_around_zero = 0.05,
+                                                                                    smooth_out_vel_bound = self.smooth_out_rot_vel, 
+                                                                                    target_vel = self.target_rot_vel,
+                                                                                    accel = self.max_rot_accel,
+                                                                                    deaccel = self.min_rot_accel,
+                                                                                    current_accel = self.current_rot_accel,
+                                                                                    pos_jerk = self.pos_rot_jerk,
+                                                                                    neg_jerk= self.neg_rot_jerk)
 
         # forward / backward control
 
@@ -295,24 +296,8 @@ class MoveBaseActionClient(object):
         self.client.send_goal(move_goal)
         self.client.wait_for_result()
 
-    def move_forward(self, x):
-        # http://wiki.ros.org/navigation/Tutorials/SendingSimpleGoals
-
-        move_goal = MoveBaseGoal()
-        move_goal.target_pose.pose.position.x = x
-        move_goal.target_pose.pose.orientation.z = 1.0
-        move_goal.target_pose.pose.orientation.w = 0.0
-        move_goal.target_pose.header.frame_id = "base_link"
-        move_goal.target_pose.header.stamp = rospy.Time.now()
-
-        
-        self.client.send_goal(move_goal)
-        self.client.wait_for_result()
-
     def move_relative(self, x, theta):
-        # http://wiki.ros.org/navigation/Tutorials/SendingSimpleGoals
-        # http://docs.ros.org/en/jade/api/tf/html/python/tf_python.html
-
+        # TODO I should turn this into an action lib service to be easier for others to use
         # whats the goal relative to the base frame
         rospy.loginfo("Creating and populating transformation")
 
@@ -372,6 +357,7 @@ class MoveBaseActionClient(object):
         rospy.loginfo("Sent Goal, wating for result")
         
         self.client.wait_for_result()
+    
 
         
 

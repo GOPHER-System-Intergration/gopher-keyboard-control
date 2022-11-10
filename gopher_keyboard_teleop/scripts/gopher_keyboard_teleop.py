@@ -58,9 +58,9 @@ class KeyboardControl():
 
         Hold Correspondng Button to Keep the Robot Moving
 
-        Press SHIFT to hard stop robot
+        Press ESC to hard stop robot
 
-        Press ESC or Cntrl-C to finish the programm
+        Press Cntrl-C to finish the programm
 
         """
 
@@ -91,7 +91,7 @@ class KeyboardControl():
 
         # self.keys_map_state_update(keys)
 
-        if "shift" in keys:  # Our Emergency Stop Button
+        if "esc" in keys:  # Our Emergency Stop Button
             self.reset_control_flags()
             self.stop_robot()
 
@@ -157,6 +157,10 @@ class KeyboardControl():
             if key == keyboard.Key.shift:
                 # print('shift key!')
                 return 'shift'
+            elif key == keyboard.Key.esc:
+                return 'esc'
+            # elif key == keyboard.Key.tab:
+            #     return "tab"
             elif key == keyboard.Key.down:
                 # print('down key!')
                 return 'down'
@@ -169,6 +173,20 @@ class KeyboardControl():
             elif key == keyboard.Key.left:
                 # print('left key!')
                 return 'left'
+
+                
+            elif key == keyboard.Key.f1:
+                return "f1" 
+            elif key == keyboard.Key.f2:
+                return "f2" 
+            elif key == keyboard.Key.f3:
+                return "f3" 
+            elif key == keyboard.Key.f4:
+                return "f4" 
+            elif key == keyboard.Key.f5:
+                return "f5" 
+            elif key == keyboard.Key.f6:
+                return "f6" 
             else:
                 return key.char.lower()
             # print('current key pressed', current_key)
@@ -192,8 +210,10 @@ class KeyboardControl():
         
         if key == keyboard.Key.ctrl:
             return False
-        if key == keyboard.Key.esc:
-            return False
+
+        # escape is being used now as the emergency stop button
+        # if key == keyboard.Key.esc:
+        #     return False
         else:
 
             try:
@@ -239,10 +259,11 @@ if __name__ == '__main__':
 
     try:
         while listener.is_alive():
+            pass
             
             
-            computer_keyboard.keys_map_robot_control(keys = current_keys)
-            # computer_keyboard.print_held_keys()
+            # computer_keyboard.keys_map_robot_control(keys = current_keys)
+            computer_keyboard.print_held_keys()
     except:
         restoreTerminalSettings(settings)
         

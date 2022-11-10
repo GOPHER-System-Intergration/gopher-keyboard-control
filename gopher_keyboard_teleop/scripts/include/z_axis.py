@@ -19,10 +19,28 @@ class ZAxis():
         """
 
         # forward / backward control
-        if 'w' in keys and 's' in keys: self.pub_vel(0.0)
-        elif 'w' in keys:   self.pub_vel(1.0)
-        elif 's' in keys:   self.pub_vel(-1.0)    
-        else:               self.pub_vel( 0.0)
+        try:
+            # TODO add relative functionality
+
+            if "f1" in keys:
+                pass
+            if "f2" in keys:
+                pass
+            if "f3" in keys:
+                pass
+            if "f4" in keys:
+                pass
+            if "f5" in keys:
+                pass
+            if "f6" in keys:
+                pass
+            
+            if 'w' in keys and 's' in keys: self.pub_vel(0.0)
+            elif 'w' in keys:   self.pub_vel(1.0)
+            elif 's' in keys:   self.pub_vel(-1.0)    
+            else:               self.pub_vel( 0.0)
+        except:
+            self.pub_vel( 0.0)
 
     def pub_vel(self, z_vel):
         """
