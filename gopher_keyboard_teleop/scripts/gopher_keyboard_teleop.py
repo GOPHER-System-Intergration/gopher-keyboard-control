@@ -174,7 +174,7 @@ class KeyboardControl():
                 # print('left key!')
                 return 'left'
 
-                
+
             elif key == keyboard.Key.f1:
                 return "f1" 
             elif key == keyboard.Key.f2:
@@ -262,8 +262,8 @@ if __name__ == '__main__':
             pass
             
             
-            # computer_keyboard.keys_map_robot_control(keys = current_keys)
-            computer_keyboard.print_held_keys()
+            computer_keyboard.keys_map_robot_control(keys = current_keys)
+            # computer_keyboard.print_held_keys()
     except:
         restoreTerminalSettings(settings)
         
