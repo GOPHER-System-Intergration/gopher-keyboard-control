@@ -4,16 +4,8 @@ from __future__ import print_function
 
 import rospy
 
-
 import sys
 from select import select
-
-if sys.platform == 'win32':
-    import msvcrt
-else:
-    import termios
-    import tty
-
 
 from std_msgs.msg import String
 from pynput import keyboard
@@ -22,9 +14,6 @@ from math import pi
 from include.mobile_base import MobileBase
 from include.robot_arms import LeftArm, RightArm
 from include.z_axis import ZAxis
-
-
-
 
 class KeyboardControl():
     def __init__(self):
@@ -228,22 +217,8 @@ class KeyboardControl():
     def print_held_keys(self):
         print(current_keys)
 
-
-def saveTerminalSettings():
-    if sys.platform == 'win32':
-        return None
-    return termios.tcgetattr(sys.stdin)
-
-def restoreTerminalSettings(old_settings):
-    if sys.platform == 'win32':
-        return
-    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
-
-
-
 if __name__ == '__main__':
 
-    # settings = saveTerminalSettings()
 
     current_key = ''
     current_keys = set()
@@ -263,6 +238,5 @@ if __name__ == '__main__':
         
     except:
         pass
-        # restoreTerminalSettings(settings)
         
     listener.stop()
