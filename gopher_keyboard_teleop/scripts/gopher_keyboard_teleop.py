@@ -235,7 +235,6 @@ if __name__ == '__main__':
         while not rospy.is_shutdown():
             computer_keyboard.keys_map_robot_control(keys = current_keys)
             # computer_keyboard.print_held_keys()
-        
     except:
         pass
         
