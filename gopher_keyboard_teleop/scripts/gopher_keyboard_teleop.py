@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from __future__ import print_function
 
@@ -208,18 +208,18 @@ class KeyboardControl():
         global current_keys
         global current_key
         
-        if key == keyboard.Key.ctrl:
-            return False
+        # if key == keyboard.Key.ctrl:
+        #     return False
 
         # escape is being used now as the emergency stop button
         # if key == keyboard.Key.esc:
         #     return False
-        else:
+        # else:
 
-            try:
-                current_keys.remove(self.keyboard_key_to_string(key))
-            except KeyError:
-                pass
+        try:
+            current_keys.remove(self.keyboard_key_to_string(key))
+        except KeyError:
+            pass
 
             current_key = ''
             self.previous_key = ''
@@ -243,7 +243,7 @@ def restoreTerminalSettings(old_settings):
 
 if __name__ == '__main__':
 
-    settings = saveTerminalSettings()
+    # settings = saveTerminalSettings()
 
     current_key = ''
     current_keys = set()
@@ -256,14 +256,13 @@ if __name__ == '__main__':
         on_release=computer_keyboard.on_release)
     listener.start()
 
-
     try:
-        while listener.is_alive():
-            pass
-            
-            
+        while not rospy.is_shutdown():
             computer_keyboard.keys_map_robot_control(keys = current_keys)
             # computer_keyboard.print_held_keys()
-    except:
-        restoreTerminalSettings(settings)
         
+    except:
+        pass
+        # restoreTerminalSettings(settings)
+        
+    listener.stop()
