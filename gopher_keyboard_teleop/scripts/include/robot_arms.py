@@ -66,6 +66,10 @@ class RobotArm():
         except:
             self.pub_vel(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
+    def key_map_on_release(self, key):
+        # TODO Added the response when a button is released
+        print(key)
+
     def pub_vel(self, x_vel, y_vel, z_vel, roll_vel, pitch_vel, yaw_vel):
         """
         Send the twist msg to the arm

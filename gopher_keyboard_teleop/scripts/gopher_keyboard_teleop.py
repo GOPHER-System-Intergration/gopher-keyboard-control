@@ -20,7 +20,8 @@ class KeyboardControl():
 
         rospy.init_node('keyboard_double3_publisher', anonymous=True)
 
-        
+        rospy.set_param("keyboard_status", {"isAlive":True, "isInit":True})
+
         rate = rospy.Rate(10) # 1hz
 
         self.mobile_base = MobileBase()
@@ -37,7 +38,7 @@ class KeyboardControl():
         self.z_axis_control_flag = False
 
         # Previous Key Pressed
-        self.previous_key = ''
+        # self.previous_key = ''
 
         self.stop_robot()
 
@@ -96,6 +97,8 @@ class KeyboardControl():
         elif self.z_axis_control_flag:    
             keys_map('', '', '', keys)
 
+    
+
     def reset_control_flags(self):
         self.left_arm_control_flag = False
         self.right_arm_control_flag = False
@@ -140,6 +143,30 @@ class KeyboardControl():
         self.right_arm.pub_vel( 0.0,  0.0,  0.0,  0.0,  0.0,  0.0)
         self.z_axis.pub_vel(0.0)
         self.mobile_base.hard_stop()
+
+    def key_map_robot_control_on_release(self, key):
+        def key_map_on_release(key_left_arm, key_right_arm, key_mobile_base, key_z_axis):
+            self.left_arm.key_map_on_release(key_left_arm)
+            self.right_arm.key_map_on_release(key_right_arm)
+            self.mobile_base.key_map_on_release(key_mobile_base)
+            self.z_axis.key_map_on_release(key_z_axis)
+
+        try:
+
+            if self.left_arm_control_flag:  
+                key_map_on_release(key, '', '', '')
+
+            elif self.right_arm_control_flag: 
+                key_map_on_release('', key, '', '')
+
+            elif self.base_control_flag:      
+                key_map_on_release('', '', key, '')
+
+            elif self.z_axis_control_flag:    
+                key_map_on_release('', '', '', key)
+
+        except Exception as e:
+            rospy.logwarn(e)
 
     def keyboard_key_to_string(self,  key):
         try:
@@ -196,32 +223,49 @@ class KeyboardControl():
     def on_release(self, key):
         global current_keys
         global current_key
+
+        global released_key
         
-        # if key == keyboard.Key.ctrl:
-        #     return False
-
-        # escape is being used now as the emergency stop button
-        # if key == keyboard.Key.esc:
-        #     return False
-        # else:
-
         try:
-            current_keys.remove(self.keyboard_key_to_string(key))
+            released_key = self.keyboard_key_to_string(key)
+            current_keys.remove(released_key)
+
         except KeyError:
             pass
-
             current_key = ''
-            self.previous_key = ''
+            released_key = ''
+            # self.previous_key = ''
 
 
     def print_held_keys(self):
         print(current_keys)
+
+    def on_shutdown(self):
+        """
+        This param will be shared with all the nodes in ros
+        On the shutdown of this node, the system monitor will handle processinng and cleanly closing everything, 
+        but it needs a signal of when to do so
+        """
+        
+        # Notes : during this shutdown process there is no guarentee that publishing messages 
+        #         or calling service will deliever msgs or request,
+        #         thus it seems letting another node hadnle that process makes more sense
+
+        #rospy.delete_param("keyboard_status")
+        # alternative method:
+        rospy.set_param("keyboard_status", {"isAlive":False, "isInit":True})
+
+        # This param will be shared with all the nodes in ros
+        # On the shutdown of this node, the system monitor will handle processinng and cleanly closing everything.
 
 if __name__ == '__main__':
 
 
     current_key = ''
     current_keys = set()
+
+    released_key = ''
+
     computer_keyboard = KeyboardControl()
     print(computer_keyboard.init_msg)
 
@@ -235,7 +279,15 @@ if __name__ == '__main__':
         while not rospy.is_shutdown():
             computer_keyboard.keys_map_robot_control(keys = current_keys)
             # computer_keyboard.print_held_keys()
+
+            if not released_key == '':
+                computer_keyboard.key_map_robot_control_on_release(released_key)
+                released_key = ''
+            
+
+
     except:
         pass
-        
+
+    rospy.on_shutdown(computer_keyboard.on_shutdown)
     listener.stop()

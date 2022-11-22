@@ -50,4 +50,8 @@ class ZAxis():
         msg.linear.z = z_vel
         self.z_axis_twist_pub.publish(msg)
 
+    def key_map_on_release(self, key):
+        # TODO Added the response when a button is released
+        print(key)
+
 

@@ -87,6 +87,10 @@ class MobileBase():
         '''
         return float(vel)/float(time)
 
+    def key_map_on_release(self, key):
+        # TODO Added the response when a button is released
+        print(key)
+
     def calc_jerk(self, vel_change, accel):
         """
         calculates the needed jerk to make the targeted shift in the velocity:
