@@ -121,19 +121,19 @@ class KeyboardControl():
         if key == "left":
             self.reset_control_flags()
             self.left_arm_control_flag = True
-            # print("IN_STATE_UPDATE -> left")
+            print("IN_STATE_UPDATE -> left")
         elif key == "right":
             self.reset_control_flags()
             self.right_arm_control_flag = True
-            # print("IN_STATE_UPDATE -> right")
+            print("IN_STATE_UPDATE -> right")
         elif key == "up":
             self.reset_control_flags()
             self.z_axis_control_flag = True
-            # print("IN_STATE_UPDATE -> z_axis")
+            print("IN_STATE_UPDATE -> z_axis")
         elif key == "down":
             self.reset_control_flags()
             self.base_control_flag = True
-            # print("IN_STATE_UPDATE -> base")
+            print("IN_STATE_UPDATE -> base")
 
     def stop_robot(self):
         """

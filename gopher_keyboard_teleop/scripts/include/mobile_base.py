@@ -41,14 +41,14 @@ class MobileBase():
         self.current_lin_jerk = 0.0
         self.current_rot_jerk = 0.0
 
-        self.max_lin_vel = 0.5 # meters
-        self.min_lin_vel = -0.2 # meters
+        self.max_lin_vel = 0.25 # meters
+        self.min_lin_vel = -0.1 # meters
         self.max_rot_vel = pi/2.0 # rads per sec (90 degrees per sec)
         self.min_rot_vel = -pi/2.0
 
-        self.max_lin_accel = self.calc_accel(vel = self.max_lin_vel, time = 1.0)
+        self.max_lin_accel = self.calc_accel(vel = self.max_lin_vel, time = 0.5)
         self.min_lin_accel = -self.max_lin_accel  # this should be deceleration
-        self.max_rot_accel = self.calc_accel(vel = self.max_rot_vel, time = 1.0)
+        self.max_rot_accel = self.calc_accel(vel = self.max_rot_vel, time = 0.5)
         self.min_rot_accel = -self.max_rot_accel  # this should be deceleration
 
         self.smooth_out_lin_vel = 0.1
@@ -89,7 +89,8 @@ class MobileBase():
 
     def key_map_on_release(self, key):
         # TODO Added the response when a button is released
-        print(key)
+        pass
+        # print(key)
 
     def calc_jerk(self, vel_change, accel):
         """
