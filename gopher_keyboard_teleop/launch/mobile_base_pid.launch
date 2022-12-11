@@ -1,0 +1,30 @@
+<launch>
+
+    <node name="controller" pkg="pid" type="controller" ns="lin_controller" output="screen" >
+      <param name="node_name" value="base_lin_pid" />
+      <param name="Kp" value="0.59246" />
+      <param name="Ki" value="40.0" />
+      <param name="Kd" value="0.0" />
+      <param name="upper_limit" value="1.5" />
+      <param name="lower_limit" value="-2" />
+      <param name="windup_limit" value="10" />
+      <param name="max_loop_frequency" value="100.0" />
+      <param name="min_loop_frequency" value="100.0" />
+     </node>
+
+    <node name="controller" pkg="pid" type="controller" ns="rot_controller" output="screen" >
+      <param name="node_name" value="base_rot_pid" />
+      <param name="Kp" value="1.0" />
+      <param name="Ki" value="0.0" />
+      <param name="Kd" value="0.0" />
+      <param name="upper_limit" value="2" />
+      <param name="lower_limit" value="-2" />
+      <param name="windup_limit" value="10" />
+      <param name="max_loop_frequency" value="100.0" />
+      <param name="min_loop_frequency" value="100.0" />
+      
+    </node>
+
+    <!-- <node name="mobile_base" pkg="gopher_keyboard_teleop" type="$(find gopher_keyboard_teleop)/scripts/include/mobile_base.py" output="screen"/> -->
+
+</launch>
