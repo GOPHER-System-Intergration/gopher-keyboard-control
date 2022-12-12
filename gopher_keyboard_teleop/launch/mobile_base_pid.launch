@@ -27,5 +27,5 @@
     </node>
 
     <!-- <node name="mobile_base" pkg="gopher_keyboard_teleop" type="$(find gopher_keyboard_teleop)/scripts/include/mobile_base.py" output="screen"/> -->
-
+    <!-- <node name="rqt_plot" pkg="rqt_plot" type="rqt_plot"/> -->
 </launch>

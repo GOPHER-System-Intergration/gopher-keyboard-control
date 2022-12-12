@@ -8,31 +8,50 @@ import rospy
 from std_msgs.msg import String, Float64
 from sensor_msgs.msg import Imu
 
-def callback(data):
-    print("data reviced")
+
 
 if __name__ == '__main__':
     
     
     rospy.init_node("mobile_base_setpoint_oscillator")
     pub = rospy.Publisher("/lin_controller/setpoint", Float64, queue_size=1)
-    sub = rospy.Subscriber("/imu", Imu, callback)
+    
 
     rate =  rospy.Rate(10) # 1hz
+    state = 0
+
+    lin_vel = 0.0
     
     print("hello")
 
     try:
-        rospy.wait_for_message("/imu", Imu, timeout=5)
+        # rospy.wait_for_message("/imu", Imu, timeout=5)
         while not rospy.is_shutdown(): 
             pass
+            
+            if state == 0:
+                lin_vel = 0.25
+            elif state == 1:
+                lin_vel = 0.0
+            elif state == 2:
+                lin_vel = -0.25
+            elif state == 3:
+                lin_vel = 0.0
 
-            pub.publish(Float64(0.25))
-            rospy.sleep(4.0)
-            pub.publish(Float64(-0.25))
-            rospy.sleep(4.0)
-            pub.publish(Float64(0.0))
-            rospy.sleep(4.0)
+            elif state == 4:
+                lin_vel = 0.25
+                state = 0
+
+            else:
+                rospy.is_shutdown
+
+            for i in range(100):
+                pub.publish(Float64(lin_vel))
+                rospy.sleep(3.0 / 100.0)
+            
+            state += 1
+
+            
     except rospy.ROSException:
         rospy.logwarn("timeout occured")
 
