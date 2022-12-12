@@ -10,6 +10,7 @@
       <param name="windup_limit" value="10" />
       <param name="max_loop_frequency" value="100.0" />
       <param name="min_loop_frequency" value="100.0" />
+      <param name="setpoint_timeout" value="-1.0"/>
      </node>
 
     <node name="controller" pkg="pid" type="controller" ns="rot_controller" output="screen" >
@@ -22,7 +23,7 @@
       <param name="windup_limit" value="10" />
       <param name="max_loop_frequency" value="100.0" />
       <param name="min_loop_frequency" value="100.0" />
-      
+      <param name="setpoint_timeout" value="-1.0"/>
     </node>
 
     <!-- <node name="mobile_base" pkg="gopher_keyboard_teleop" type="$(find gopher_keyboard_teleop)/scripts/include/mobile_base.py" output="screen"/> -->
