@@ -25,7 +25,7 @@ if __name__ == '__main__':
     print("hello")
 
     try:
-        # rospy.wait_for_message("/imu", Imu, timeout=5)
+        rospy.wait_for_message("/imu", Imu, timeout=5)
         while not rospy.is_shutdown(): 
             pass
             
