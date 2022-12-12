@@ -50,7 +50,7 @@ class MobileBase():
         self.rot_setpoint_pub = rospy.Publisher("rot_controller/setpoint", Float64, queue_size=1)
         self.rot_effort_sub = rospy.Subscriber("rot_controller/control_effort", Float64, self.rot_effort_callback)
 
-        # self.imu_sub = rospy.Subscriber("Imu", Imu, self.imu_callback)
+        self.imu_sub = rospy.Subscriber("Imu", Imu, self.imu_callback)
 
         self.init_pid()
 
@@ -95,21 +95,27 @@ class MobileBase():
         #                                     accel = self.min_rot_accel) 
         
 
+        try:
+            rospy.wait_for_message("/imu", Imu, timeout=5)
 
-        while not rospy.is_shutdown():
-            if self.new_effort_recieved:
-                self.new_effort_recieved = False
+            while not rospy.is_shutdown():
+                if self.new_effort_recieved:
+                    self.new_effort_recieved = False
 
-                ## Check to see if effort is too low, then set it to zero
-                if(abs(self.rot_effort) < 0.01):
-                    self.rot_effort = 0.0
+                    ## Check to see if effort is too low, then set it to zero
+                    if(abs(self.rot_effort) < 0.01):
+                        self.rot_effort = 0.0
 
-                if(abs(self.lin_effort) < 0.01):
-                    self.lin_effort = 0.0
+                    if(abs(self.lin_effort) < 0.01):
+                        self.lin_effort = 0.0
 
-                
+                    
 
-                self.pub_vel(self.lin_effort, self.rot_effort)
+                    self.pub_vel(self.lin_effort, self.rot_effort)
+        except rospy.ROSException:
+            rospy.logwarn("timeout occured")
+        
+
         
         
     def init_pid(self):
@@ -132,10 +138,14 @@ class MobileBase():
     def imu_callback(self, data= Imu()):
         # Calc the lin velocity of the robot        
         time = self.get_time_step_in_sec()
-        accel = data.linear_acceleration
-        self.lin_vel += float(time)*float(accel)
+        lin_accel = data.linear_acceleration.x
+        
+        self.lin_vel += float(time)*float(lin_accel)
 
+        rot_vel = data.angular_velocity.z
+        
         self.lin_state_pub.publish(Float64(self.lin_vel))
+        self.rot_state_pub.publish(Float64(rot_vel))
 
 
     def lin_effort_callback(self, data = Float64()):
@@ -220,7 +230,7 @@ class MobileBase():
 
         # Send in all the values to describe the state of the system
         self.twist_pub.publish(msg)
-        self.lin_state_pub.publish(Float64(x_vel))
+        # self.lin_state_pub.publish(Float64(x_vel))
         # self.rot_state_pub.publish(Float64(w_vel))
 
     # def pub_target_vel(self):

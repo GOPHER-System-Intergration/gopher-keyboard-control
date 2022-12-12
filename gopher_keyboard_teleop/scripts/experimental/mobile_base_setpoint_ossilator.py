@@ -27,12 +27,12 @@ if __name__ == '__main__':
         while not rospy.is_shutdown(): 
             pass
 
-            # pub.publish(Float64(0.25))
-            # rospy.sleep(4.0)
-            # pub.publish(Float64(-0.25))
-            # rospy.sleep(4.0)
-            # pub.publish(Float64(0.0))
-            # rospy.sleep(4.0)
+            pub.publish(Float64(0.25))
+            rospy.sleep(4.0)
+            pub.publish(Float64(-0.25))
+            rospy.sleep(4.0)
+            pub.publish(Float64(0.0))
+            rospy.sleep(4.0)
     except rospy.ROSException:
         rospy.logwarn("timeout occured")
 
