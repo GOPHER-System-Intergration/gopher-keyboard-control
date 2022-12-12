@@ -11,7 +11,7 @@ import tf2_ros
 import tf_conversions
 
 from std_msgs.msg import String, Float64, Float32
-from pynput import keyboard
+# from pynput import keyboard
 from geometry_msgs.msg import Twist, PoseStamped, TransformStamped
 from nav_msgs.msg import Odometry, Path
 from math import pi, sin, cos 
@@ -143,7 +143,7 @@ class MobileBase():
         self.lin_vel += float(time)*float(lin_accel)
 
         rot_vel = data.angular_velocity.z
-        
+
         self.lin_state_pub.publish(Float64(self.lin_vel))
         self.rot_state_pub.publish(Float64(rot_vel))
 
