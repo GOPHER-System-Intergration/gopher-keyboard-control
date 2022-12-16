@@ -21,6 +21,7 @@ if __name__ == '__main__':
     state = 0
 
     lin_vel = 0.0
+    speed = 0.2
     
     print("hello")
 
@@ -30,16 +31,16 @@ if __name__ == '__main__':
             pass
             
             if state == 0:
-                lin_vel = 0.25
+                lin_vel = speed
             elif state == 1:
                 lin_vel = 0.0
             elif state == 2:
-                lin_vel = -0.25
+                lin_vel = speed * -1
             elif state == 3:
                 lin_vel = 0.0
 
             elif state == 4:
-                lin_vel = 0.25
+                lin_vel = speed
                 state = 0
 
             else:
