@@ -38,6 +38,10 @@ class MobileBase():
 
     def __init__(self):
 
+        rospy.init_node("pid_tester")
+        rate = rospy.Rate(5)
+        rospy.loginfo("pid_tester_main_okay")
+
         self.rate = rospy.Rate(10)
         # self.twist_pub = rospy.Publisher('gopher/base_controller/command', Twist, queue_size=1)
         self.twist_pub = rospy.Publisher('base_controller/command', Twist, queue_size=1)
@@ -50,11 +54,13 @@ class MobileBase():
         self.rot_setpoint_pub = rospy.Publisher("rot_controller/setpoint", Float64, queue_size=1)
         self.rot_effort_sub = rospy.Subscriber("rot_controller/control_effort", Float64, self.rot_effort_callback)
 
-        self.imu_sub = rospy.Subscriber("Imu", Imu, self.imu_callback)
+        self.imu_sub = rospy.Subscriber("imu", Imu, self.imu_callback)
+        self.previous_imu_msg = Imu()
 
         self.init_pid()
 
-        self.previous_time = rospy.get_time()
+        
+        
 
 
         # self.accel_pub = rospy.Publisher('base_controller/accel', Float32, queue_size=1)
@@ -96,9 +102,12 @@ class MobileBase():
         
 
         try:
+            
             rospy.wait_for_message("/imu", Imu, timeout=5)
 
             while not rospy.is_shutdown():
+                
+                
                 if self.new_effort_recieved:
                     self.new_effort_recieved = False
 
@@ -134,18 +143,26 @@ class MobileBase():
         rospy.loginfo("PID Controllers Inicialized")
 
 
-
     def imu_callback(self, data= Imu()):
         # Calc the lin velocity of the robot        
-        time = self.get_time_step_in_sec()
+        # time = self.get_time_step_in_sec()
+        # print("in imy call back")
+        time = (data.header.stamp - self.previous_imu_msg.header.stamp).to_sec()
+
         lin_accel = data.linear_acceleration.x
         
-        self.lin_vel += float(time)*float(lin_accel)
+        self.lin_vel += float(time)*round(float(lin_accel), 2)
+
+        print(str(time) , str(round(float(lin_accel), 1)))
 
         rot_vel = data.angular_velocity.z
 
+        self.previous_imu_msg = data
+
         self.lin_state_pub.publish(Float64(self.lin_vel))
         self.rot_state_pub.publish(Float64(rot_vel))
+
+
 
 
     def lin_effort_callback(self, data = Float64()):
@@ -206,15 +223,15 @@ class MobileBase():
     #     jerk = accel / vel_change * (0.5 * accel)
     #     return jerk
 
-    def get_time_step_in_sec(self):
+    # def get_time_step_in_sec(self):
 
-        current_time = rospy.get_time()
-        duration = current_time - self.previous_time
+    #     current_time = rospy.get_time()
+    #     duration = current_time - self.previous_time
 
-        self.previous_time = current_time
+    #     self.previous_time = current_time
 
-        # print(str(duration))
-        return duration
+    #     # print(str(duration))
+    #     return duration
 
 
     def pub_vel(self, x_vel, w_vel):
@@ -473,9 +490,9 @@ class MoveBaseActionClient(object):
 
 if __name__ == "__main__":
     
-    rospy.init_node("pid_tester")
-    rate = rospy.Rate(5)
-    rospy.loginfo("pid_tester_main_okay")
+    # rospy.init_node("pid_tester")
+    # rate = rospy.Rate(5)
+    # rospy.loginfo("pid_tester_main_okay")
     base = MobileBase()
 
     
