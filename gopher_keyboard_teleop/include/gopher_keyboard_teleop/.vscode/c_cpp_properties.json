@@ -1,0 +1,42 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/ice/ws_kinova/devel/include/**",
+        "/home/ice/hiro_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/ice/hiro_ws/src/fetch_ros/fetch_depth_layer/include/**",
+        "/home/ice/hiro_ws/src/fetch_gazebo/fetch_gazebo/include/**",
+        "/home/ice/hiro_ws/src/fetch_ros/fetch_ikfast_plugin/include/**",
+        "/home/ice/ws_kinova/src/ros_kortex/third_party/gazebo-pkgs/gazebo_grasp_plugin/include/**",
+        "/home/ice/ws_kinova/src/ros_kortex/third_party/gazebo-pkgs/gazebo_version_helpers/include/**",
+        "/home/ice/hiro_ws/src/gopher-keyboard-control/gopher_keyboard_teleop/include/**",
+        "/home/ice/hiro_ws/src/gopher_setup_tf/include/**",
+        "/home/ice/hiro_ws/src/imu_tools/imu_complementary_filter/include/**",
+        "/home/ice/hiro_ws/src/imu_tools/imu_filter_madgwick/include/**",
+        "/home/ice/hiro_ws/src/kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2n6s300_ikfast/include/**",
+        "/home/ice/hiro_ws/src/kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s6s300_ikfast/include/**",
+        "/home/ice/hiro_ws/src/kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/j2s7s300_ikfast/include/**",
+        "/home/ice/hiro_ws/src/Mobile_Robot_ROS_Control_Interfaces/joystick_control/include/**",
+        "/home/ice/hiro_ws/src/kinova-ros/kinova_moveit/kinova_arm_moveit_demo/include/**",
+        "/home/ice/hiro_ws/src/kinova-ros/kinova_driver/include/**",
+        "/home/ice/ws_kinova/src/ros_kortex/kortex_driver/include/**",
+        "/home/ice/hiro_ws/src/kinova-ros/kinova_moveit/inverse_kinematics_plugins/ikfast/m1n6s300_ikfast/include/**",
+        "/home/ice/hiro_ws/src/ros-pid/include/**",
+        "/home/ice/ws_kinova/src/ros_kortex/third_party/roboticsgroup_upatras_gazebo_plugins/include/**",
+        "/home/ice/hiro_ws/src/simple_navigation_goals/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

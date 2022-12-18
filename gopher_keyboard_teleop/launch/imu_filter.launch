@@ -1,0 +1,38 @@
+<!-- ComplementaryFilter launch file -->
+  <!-- 
+  ### Notes for frieght IMU data
+
+  DO NOT USE TOPICS - both topics have a values that are not in the same units recommened by ROS for lin acceleration [m/s^2]
+    /imu1/raw_data
+    /imu2/raw_data 
+  
+  Topics of interest
+    /imu1/imu   error (~ 0.1)
+    /imu2/imu   error (~ -0.1)
+
+    /imu
+    /no_zero_imu
+
+    NOTE /imu == /no_zero_imu
+      I am not sure what the diffenerance between the two are. They are returning the same IMU value when the base is stationary
+  -->
+
+<launch>
+
+  #### Complementary filter
+
+  # Subscribed Topic
+  <remap from="imu/data_raw"  to="imu"/>
+
+  # Published Topic 
+  <remap from="imu/data"  to="imu/data_filtered"/>
+  <node pkg="imu_complementary_filter" type="complementary_filter_node"
+      name="imu_filter_node" output="screen">
+    <param name="do_bias_estimation" value="true"/>
+    <param name="do_adaptive_gain" value="true"/>
+    <param name="use_mag" value="false"/>
+    <param name="gain_acc" value="0.01"/>
+    <param name="gain_mag" value="0.01"/>
+  </node>
+
+</launch>

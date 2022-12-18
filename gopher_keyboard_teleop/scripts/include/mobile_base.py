@@ -118,8 +118,6 @@ class MobileBase():
                     if(abs(self.lin_effort) < 0.01):
                         self.lin_effort = 0.0
 
-                    
-
                     self.pub_vel(self.lin_effort, self.rot_effort)
         except rospy.ROSException:
             rospy.logwarn("timeout occured")
