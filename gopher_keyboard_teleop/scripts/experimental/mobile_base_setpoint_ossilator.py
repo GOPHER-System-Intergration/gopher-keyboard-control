@@ -14,14 +14,14 @@ if __name__ == '__main__':
     
     
     rospy.init_node("mobile_base_setpoint_oscillator")
-    pub = rospy.Publisher("/lin_controller/setpoint", Float64, queue_size=1)
+    pub = rospy.Publisher("/rot_controller/setpoint", Float64, queue_size=1)
     
 
     rate =  rospy.Rate(10) # 1hz
     state = 0
 
     lin_vel = 0.0
-    speed = 0.2
+    speed = 0.1
 
     accel = 0.0
     a = 0.5 # meters/sec sq
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     print("hello")
 
     try:
-        rospy.wait_for_message("/imu", Imu, timeout=5)
+        # rospy.wait_for_message("/imu", Imu, timeout=5)
 
         # step input
 

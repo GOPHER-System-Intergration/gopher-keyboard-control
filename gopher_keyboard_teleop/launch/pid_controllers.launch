@@ -1,5 +1,7 @@
 <launch>
 
+    <node name="freight_vel_publisher" pkg="gopher_keyboard_teleop" type="mobile_base_vel.py"/>
+
     <node name="controller" pkg="pid" type="controller" ns="lin_controller" output="screen" >
       <param name="node_name" value="base_lin_pid" />
       <param name="Kp" value="1.0" />

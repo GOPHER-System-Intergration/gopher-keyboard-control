@@ -46,18 +46,18 @@ class MobileBase():
         # self.twist_pub = rospy.Publisher('gopher/base_controller/command', Twist, queue_size=1)
         self.twist_pub = rospy.Publisher('base_controller/command', Twist, queue_size=1)
 
-        self.lin_state_pub = rospy.Publisher("lin_controller/state", Float64, queue_size=1)
-        self.lin_setpoint_pub = rospy.Publisher("lin_controller/setpoint", Float64, queue_size=1)
+        # self.lin_state_pub = rospy.Publisher("lin_controller/state", Float64, queue_size=1)
+        # self.lin_setpoint_pub = rospy.Publisher("lin_controller/setpoint", Float64, queue_size=1)
         self.lin_effort_sub = rospy.Subscriber("lin_controller/control_effort", Float64, self.lin_effort_callback)
 
-        self.rot_state_pub = rospy.Publisher("rot_controller/state", Float64, queue_size=1)
-        self.rot_setpoint_pub = rospy.Publisher("rot_controller/setpoint", Float64, queue_size=1)
+        # self.rot_state_pub = rospy.Publisher("rot_controller/state", Float64, queue_size=1)
+        # self.rot_setpoint_pub = rospy.Publisher("rot_controller/setpoint", Float64, queue_size=1)
         self.rot_effort_sub = rospy.Subscriber("rot_controller/control_effort", Float64, self.rot_effort_callback)
 
-        self.imu_sub = rospy.Subscriber("imu", Imu, self.imu_callback)
-        self.previous_imu_msg = Imu()
+        # self.imu_sub = rospy.Subscriber("imu", Imu, self.imu_callback)
+        # self.previous_imu_msg = Imu()
 
-        self.init_pid()
+        # self.init_pid()
 
         
         
@@ -103,7 +103,7 @@ class MobileBase():
 
         try:
             
-            rospy.wait_for_message("/imu", Imu, timeout=5)
+            # rospy.wait_for_message("/imu", Imu, timeout=5)
 
             while not rospy.is_shutdown():
                 
@@ -112,10 +112,10 @@ class MobileBase():
                     self.new_effort_recieved = False
 
                     ## Check to see if effort is too low, then set it to zero
-                    if(abs(self.rot_effort) < 0.01):
+                    if(abs(self.rot_effort) < 0.001):
                         self.rot_effort = 0.0
 
-                    if(abs(self.lin_effort) < 0.01):
+                    if(abs(self.lin_effort) < 0.001):
                         self.lin_effort = 0.0
 
                     self.pub_vel(self.lin_effort, self.rot_effort)
@@ -125,40 +125,40 @@ class MobileBase():
 
         
         
-    def init_pid(self):
-        rospy.loginfo("Initcializing Values for PID Controllers")
-        while not rospy.is_shutdown() and not (self.new_effort_recieved and self.new_effort_recieved):
+    # def init_pid(self):
+    #     rospy.loginfo("Initcializing Values for PID Controllers")
+    #     while not rospy.is_shutdown() and not (self.new_effort_recieved and self.new_effort_recieved):
             
-            self.lin_setpoint_pub.publish(Float64(0.0))
-            self.lin_state_pub.publish(Float64(0.0))
-            self.rot_setpoint_pub.publish(Float64(0.0))
-            self.rot_state_pub.publish(Float64(0.0))
+    #         self.lin_setpoint_pub.publish(Float64(0.0))
+    #         self.lin_state_pub.publish(Float64(0.0))
+    #         self.rot_setpoint_pub.publish(Float64(0.0))
+    #         self.rot_state_pub.publish(Float64(0.0))
                 
-            # base.key_map_on_release(key)
+    #         # base.key_map_on_release(key)
 
-            # base.pub_vel(base.lin_effort, 0.0)
-            self.rate.sleep()
-        rospy.loginfo("PID Controllers Inicialized")
+    #         # base.pub_vel(base.lin_effort, 0.0)
+    #         self.rate.sleep()
+    #     rospy.loginfo("PID Controllers Inicialized")
 
 
-    def imu_callback(self, data= Imu()):
-        # Calc the lin velocity of the robot        
-        # time = self.get_time_step_in_sec()
-        # print("in imy call back")
-        time = (data.header.stamp - self.previous_imu_msg.header.stamp).to_sec()
+    # def imu_callback(self, data= Imu()):
+    #     # Calc the lin velocity of the robot        
+    #     # time = self.get_time_step_in_sec()
+    #     # print("in imy call back")
+    #     time = (data.header.stamp - self.previous_imu_msg.header.stamp).to_sec()
 
-        lin_accel = data.linear_acceleration.x
+    #     lin_accel = data.linear_acceleration.x
         
-        self.lin_vel += float(time)*round(float(lin_accel), 2)
+    #     self.lin_vel += float(time)*round(float(lin_accel), 2)
 
-        print(str(time) , str(round(float(lin_accel), 1)))
+    #     print(str(time) , str(round(float(lin_accel), 1)))
 
-        rot_vel = data.angular_velocity.z
+    #     rot_vel = data.angular_velocity.z
 
-        self.previous_imu_msg = data
+    #     self.previous_imu_msg = data
 
-        self.lin_state_pub.publish(Float64(self.lin_vel))
-        self.rot_state_pub.publish(Float64(rot_vel))
+    #     self.lin_state_pub.publish(Float64(self.lin_vel))
+    #     self.rot_state_pub.publish(Float64(rot_vel))
 
 
 
@@ -166,13 +166,13 @@ class MobileBase():
     def lin_effort_callback(self, data = Float64()):
         
         self.new_effort_recieved = True
-        self.first_lin_effort_recieved = True
+        # self.first_lin_effort_recieved = True
         self.lin_effort = data.data
 
     def rot_effort_callback(self, data = Float64()):
         
         self.new_effort_recieved = True
-        self.first_rot_effort_recieved = True
+        # self.first_rot_effort_recieved = True
 
         self.rot_effort = data.data
 

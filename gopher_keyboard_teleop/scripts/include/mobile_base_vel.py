@@ -25,8 +25,9 @@ from std_msgs.msg import Float64
 
 class talker():
     
-    wheel_radious = 0.10 # [meters] radious of the wheels
-    wheel_base = 0.15 # [meters] distance between the driving wheels
+    wheel_radious = 0.055 # [meters] radious of the wheels
+    wheel_base = 0.355 # [meters] distance between the driving wheels
+    # checked Jan 16 2023
 
     def __init__(self):
         
@@ -34,8 +35,8 @@ class talker():
         node = rospy.init_node("base_velocity_calc")
         rate = rospy.Rate(10)
         
-        self.lin_vel_pub = rospy.Publisher("frieght_base/lin_vel", Float64, queue_size=1)
-        self.rot_vel_pub = rospy.Publisher("frieght_base/rot_vel", Float64, queue_size=1)
+        self.lin_vel_pub = rospy.Publisher("/lin_controller/state", Float64, queue_size=1)
+        self.rot_vel_pub = rospy.Publisher("/rot_controller/state", Float64, queue_size=1)
         rospy.Subscriber("joint_states", JointState, self.publishFreightCurretVel)
         rospy.spin() 
 
